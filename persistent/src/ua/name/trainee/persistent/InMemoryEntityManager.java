@@ -31,7 +31,16 @@ public final class InMemoryEntityManager implements IEntityManager
 	@Override
 	public <T> IEntity<T> find(Class<? extends IEntity<T>> clazz, T id)
 	{
-		throw new UnsupportedOperationException();
+		IEntity<?> res;
+		for (IEntity<?> entity : this.tables.get(clazz))
+		{
+			if(entity.getIdentifier() == id) {
+				return (IEntity<T>) entity;
+			}
+			
+		}
+		return null;
+		 
 	}
 	
 	@Override

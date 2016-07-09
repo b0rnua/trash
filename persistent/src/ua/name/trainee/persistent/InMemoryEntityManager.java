@@ -8,7 +8,8 @@ import ua.org.trainee.entity.IEntity;
 public final class InMemoryEntityManager implements IEntityManager
 {
 
-	private final Map<Class<? extends IEntity<?>>, List<IEntity<?>>> tables;
+	@SuppressWarnings("rawtypes")
+	Map<Class<? extends IEntity<?>>, List<? extends IEntity>> tables;
 	
 	public InMemoryEntityManager(Storage storage)
 	{
@@ -16,31 +17,28 @@ public final class InMemoryEntityManager implements IEntityManager
 	}
 	
 	@Override
-	public void persist(IEntity<?> entity)
+	public <T> void persist(IEntity<T> entity)
 	{
-		this.tables.get(entity.getClass()).add(entity);
+//		this.tables.get(entity.getClass()).add(entity);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void merge(IEntity<?> entity)
+	public <T> void merge(IEntity<T> entity)
 	{
 		throw new UnsupportedOperationException();
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T> IEntity<T> find(Class<? extends IEntity<T>> clazz, T id)
+	public <T> IEntity<T> find(Class<? extends IEntity<T>> clazz, final T id)
 	{
-		IEntity<?> res;
-		for (IEntity<?> entity : this.tables.get(clazz))
-		{
-			if(entity.getIdentifier() == id) {
-				return (IEntity<T>) entity;
-			}
-			
-		}
-		return null;
-		 
+		return tables.get(clazz).stream()
+				.filter(e -> e.getIdentifier().equals(id))
+				.findFirst()
+				.get();
+	 
 	}
 	
 	@Override

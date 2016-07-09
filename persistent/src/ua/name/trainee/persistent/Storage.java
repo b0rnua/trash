@@ -8,5 +8,6 @@ public enum Storage
 { 
 	INSTANCE;
 
-	Map<Class<? extends IEntity<?>>, List<IEntity<?>>> tables;
+	@SuppressWarnings("rawtypes")
+	Map<Class<? extends IEntity<?>>, List<? extends IEntity>> tables;
 }

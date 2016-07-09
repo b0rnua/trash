@@ -8,41 +8,38 @@ import ua.org.trainee.entity.IEntity;
 public final class InMemoryEntityManager implements IEntityManager
 {
 
-	@SuppressWarnings("rawtypes")
-	Map<Class<? extends IEntity<?>>, List<? extends IEntity>> tables;
+	Map<Class<? extends IEntity<?>>, List<? extends IEntity<?>>> tables;
 	
 	public InMemoryEntityManager(Storage storage)
 	{
 		this.tables = Storage.INSTANCE.tables;
 	}
 	
-	@Override
-	public <T> void persist(IEntity<T> entity)
-	{
-//		this.tables.get(entity.getClass()).add(entity);
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public <T> void merge(IEntity<T> entity)
-	{
-		throw new UnsupportedOperationException();
-	}
-
-
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> IEntity<T> find(Class<? extends IEntity<T>> clazz, final T id)
+	public <E extends IEntity<?>> void persist(E entity)
 	{
-		return tables.get(clazz).stream()
+		((List<E>) this.tables.get(entity.getClass())).add(entity);
+	}
+
+	@Override
+	public <E extends IEntity<?>> void merge(E entity)
+	{
+		throw new UnsupportedOperationException();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <I, E extends IEntity<I>> IEntity<I> find(Class<E> clazz, I id)
+	{
+		return (IEntity<I>) tables.get(clazz).stream()
 				.filter(e -> e.getIdentifier().equals(id))
-				.findFirst()
+				.findAny()
 				.get();
-	 
 	}
 	
 	@Override
-	public <T> void remove(Class<? extends IEntity<T>> clazz, T id)
+	public <I, E extends IEntity<I>> void remove(Class<E> clazz, I id)
 	{
 		throw new UnsupportedOperationException();
 	}

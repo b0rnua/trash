@@ -4,8 +4,8 @@ import ua.org.trainee.entity.IEntity;
 
 public interface IEntityManager
 {
-	<T> void persist(IEntity<T> entity);
-	<T> void merge(IEntity<T> entity);
-	<T> IEntity<T> find(Class<? extends IEntity<T>> clazz, T id);
-	<T> void remove(Class<? extends IEntity<T>> clazz, T id);
+	<E extends IEntity<?>> void persist(E entity);
+	<E extends IEntity<?>> void merge(E entity);
+	<I, E extends IEntity<I>> IEntity<I> find(Class<E> clazz, I id);
+	<I, E extends IEntity<I>> void remove(Class<E> clazz, I id);
 }

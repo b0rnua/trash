@@ -8,7 +8,7 @@ public class InMemoryEntityManager implements IEntityManager
 	@Override
 	public void persist(IEntity<?> entity)
 	{
-		throw new UnsupportedOperationException();
+		Storage.INSTANCE.tables.get(entity.getClass()).add(entity);
 	}
 
 	@Override

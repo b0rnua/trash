@@ -1,14 +1,24 @@
 package ua.name.trainee.persistent;
 
+import java.util.List;
+import java.util.Map;
+
 import ua.org.trainee.entity.IEntity;
 
-public class InMemoryEntityManager implements IEntityManager
+public final class InMemoryEntityManager implements IEntityManager
 {
 
+	private final Map<Class<? extends IEntity<?>>, List<IEntity<?>>> tables;
+	
+	public InMemoryEntityManager(Storage storage)
+	{
+		this.tables = Storage.INSTANCE.tables;
+	}
+	
 	@Override
 	public void persist(IEntity<?> entity)
 	{
-		Storage.INSTANCE.tables.get(entity.getClass()).add(entity);
+		this.tables.get(entity.getClass()).add(entity);
 	}
 
 	@Override

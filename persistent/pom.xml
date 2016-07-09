@@ -1,0 +1,23 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ua.name.trainee</groupId>
+        <artifactId>pawn-shop</artifactId>
+        <version>${parent.version}</version>
+    </parent>
+    <artifactId>persistent</artifactId>
+    <packaging>jar</packaging>
+    <name>persistent</name>
+    
+    <dependencies>
+        <dependency>
+            <groupId>ua.name.trainee</groupId>
+            <artifactId>entity</artifactId>
+            <version>1.0.0.1</version>
+        </dependency>
+    </dependencies>    
+    
+</project>

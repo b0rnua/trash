@@ -1,0 +1,9 @@
+ua/org/trainee/entity/Customer.class
+ua/org/trainee/entity/PropertyType.class
+ua/org/trainee/entity/Location.class
+ua/org/trainee/entity/IPositionable.class
+ua/org/trainee/entity/Workstation.class
+ua/org/trainee/entity/IEntity.class
+ua/org/trainee/entity/IAction.class
+ua/org/trainee/entity/Contract.class
+ua/org/trainee/entity/IProperty.class

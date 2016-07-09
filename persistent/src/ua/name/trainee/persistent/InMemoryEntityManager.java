@@ -1,25 +1,37 @@
 package ua.name.trainee.persistent;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+import ua.org.trainee.entity.Contract;
+import ua.org.trainee.entity.Customer;
 import ua.org.trainee.entity.IEntity;
+import ua.org.trainee.entity.Location;
+import ua.org.trainee.entity.Workstation;
 
 public final class InMemoryEntityManager implements IEntityManager
 {
 
-	Map<Class<? extends IEntity<?>>, List<? extends IEntity<?>>> tables;
+	private static 
+		Map<Class<? extends IEntity<?>>, Set<? extends IEntity<?>>> tables = 
+			new HashMap<>();
 	
-	public InMemoryEntityManager(Storage storage)
+	static
 	{
-		this.tables = Storage.INSTANCE.tables;
+		tables.put(Location.class, ConcurrentHashMap.<Location>newKeySet());
+		tables.put(Workstation.class, ConcurrentHashMap.<Workstation>newKeySet());
+		tables.put(Customer.class, ConcurrentHashMap.<Customer>newKeySet());
+		tables.put(Contract.class, ConcurrentHashMap.<Contract>newKeySet());
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <E extends IEntity<?>> void persist(E entity)
 	{
-		((List<E>) this.tables.get(entity.getClass())).add(entity);
+		((Set<E>) tables.get(entity.getClass())).add(entity);
 	}
 
 	@Override

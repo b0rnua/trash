@@ -1,12 +1,14 @@
 package ua.name.trainee.persistent;
 
-import ua.org.trainee.entity.IEntity;
+import java.util.function.Predicate;
+
 import ua.org.trainee.exception.EntityNotFoundException;
 
-public interface IEntityManager
+public interface IEntityManager<T>
 {
-	<E extends IEntity<?>> void persist(E entity);
-	<E extends IEntity<?>> void merge(E entity);
-	<I, E extends IEntity<I>> IEntity<I> find(Class<E> clazz, I id) throws EntityNotFoundException;
-	<I, E extends IEntity<I>> void remove(Class<E> clazz, I id);
+	<E extends T> void persist(E entity);
+	<E extends T> void merge(E entity);
+	<I, E extends T> T find(Class<E> clazz, Predicate<T> p) 
+			throws EntityNotFoundException;
+	<I, E extends T> void remove(Class<E> clazz, Predicate<T> p);
 }

@@ -1,65 +1,58 @@
 package ua.name.trainee.persistent;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import ua.org.trainee.entity.Contract;
-import ua.org.trainee.entity.Customer;
-import ua.org.trainee.entity.IEntity;
-import ua.org.trainee.entity.Location;
-import ua.org.trainee.entity.Workstation;
 import ua.org.trainee.exception.EntityNotFoundException;
 
-public final class InMemoryEntityManager implements IEntityManager
+public final class InMemoryEntityManager<T> implements IEntityManager<T>
 {
 
-	private static 
-		Map<Class<? extends IEntity<?>>, Set<? extends IEntity<?>>> tables = new HashMap<>();
+	private Map<Class<?>, Set<? extends T>> tables;
 
-	static
+	public InMemoryEntityManager(IConfig config)
 	{
-		tables.put(Location.class, ConcurrentHashMap.<Location> newKeySet());
-		tables.put(Workstation.class, ConcurrentHashMap.<Workstation> newKeySet());
-		tables.put(Customer.class, ConcurrentHashMap.<Customer> newKeySet());
-		tables.put(Contract.class, ConcurrentHashMap.<Contract> newKeySet());
+		ThrowingFunction<String, Class<?>> function = Class::forName;
+		tables = config.getEntities().stream()
+				.collect(Collectors.toMap(function, useless -> ConcurrentHashMap.newKeySet()));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <E extends IEntity<?>> void persist(E entity)
+	public <E extends T> void persist(E entity)
 	{
 		((Set<E>) tables.get(entity.getClass())).add(entity);
 	}
 
 	@Override
-	public <E extends IEntity<?>> void merge(E entity)
+	public <E extends T> void merge(E entity)
 	{
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <I, E extends IEntity<I>> IEntity<I> find(Class<E> clazz, I id)
+	public <I, E extends T> T find(Class<E> clazz, Predicate<T> p)
 			throws EntityNotFoundException
 	{
 		try
 		{
-			return (IEntity<I>) tables.get(clazz).stream()
-					.filter(e -> e.getIdentifier().equals(id))
+			return tables.get(clazz).stream()
+					.filter(p)
 					.findAny()
 					.get();
 		} catch (NoSuchElementException e)
 		{
 			throw new EntityNotFoundException(
-					clazz + " with ID " + id + "is not found");
+					clazz + " is not found");
 		}
 	}
 
 	@Override
-	public <I, E extends IEntity<I>> void remove(Class<E> clazz, I id)
+	public <I, E extends T> void remove(Class<E> clazz, Predicate<T> p)
 	{
 		throw new UnsupportedOperationException();
 	}
